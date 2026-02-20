@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PapoReto — Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #00C16A; --green-dark: #009E56;
+      --green-glow: rgba(0,193,106,0.2);
+      --bg: #0A0F14; --surface: #111820; --surface2: #19232F;
+      --border: #1E2A38; --text: #E8F0F8;
+      --muted: #6B7F94; --subtle: #2E3D50;
+      --red: #FF4757;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px;
+      position: relative; overflow: hidden;
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(0,193,106,0.12) 0%, transparent 60%),
+        linear-gradient(rgba(0,193,106,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,193,106,0.03) 1px, transparent 1px);
+      background-size: auto, 50px 50px, 50px 50px;
+    }
+
+    .left-content { position: relative; z-index: 1; text-align: center; max-width: 360px; }
+
+    .left-logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, var(--green), #009E56);
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px;
+      margin: 0 auto 24px;
+      box-shadow: 0 0 60px var(--green-glow);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 40px var(--green-glow); }
+      50% { box-shadow: 0 0 80px rgba(0,193,106,0.35); }
+    }
+
+    .left-content h1 {
+      font-size: 42px; font-weight: 800;
+      letter-spacing: -1.5px; margin-bottom: 12px;
+    }
+    .left-content h1 span { color: var(--green); }
+
+    .left-content p {
+      font-size: 15px; color: var(--muted); line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .left-features { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+
+    .left-feature {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      background: rgba(0,193,106,0.04);
+      border: 1px solid rgba(0,193,106,0.1);
+      border-radius: 14px;
+    }
+
+    .left-feature-icon { font-size: 22px; }
+    .left-feature-text p:first-child { font-size: 13px; font-weight: 600; }
+    .left-feature-text p:last-child { font-size: 12px; color: var(--muted); }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px;
+    }
+
+    .login-card {
+      width: 100%; max-width: 420px;
+      animation: slideIn 0.4s ease;
+    }
+
+    @keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+      text-decoration: none; margin-bottom: 36px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .card-title { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 6px; }
+    .card-sub { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block;
+      font-size: 11px; font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .input-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px; color: var(--muted);
+      pointer-events: none;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px 13px 44px;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      outline: none; transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,193,106,0.1);
+      background: var(--surface);
+    }
+    .form-group input::placeholder { color: var(--subtle); }
+
+    .form-footer-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted); cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--green);
+      margin: 0; padding: 0;
+    }
+
+    .forgot-link {
+      font-size: 13px; color: var(--green);
+      text-decoration: none;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .btn-primary {
+      width: 100%; padding: 15px;
+      background: var(--green);
+      color: #000; font-weight: 700;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px; border: none;
+      border-radius: 12px; cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px var(--green-glow);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 40px var(--green-glow);
+    }
+
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-primary .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 24px 0; color: var(--subtle); font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .register-link {
+      text-align: center; font-size: 14px; color: var(--muted);
+    }
+    .register-link a { color: var(--green); text-decoration: none; font-weight: 600; }
+    .register-link a:hover { text-decoration: underline; }
+
+    /* ── ERROR ── */
+    .error-msg {
+      display: none;
+      background: rgba(255,71,87,0.08);
+      border: 1px solid rgba(255,71,87,0.3);
+      color: var(--red);
+      padding: 12px 16px; border-radius: 10px;
+      font-size: 13px; margin-bottom: 20px;
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+    }
+
+    .success-msg {
+      display: none;
+      background: rgba(0,193,106,0.08);
+      border: 1px solid rgba(0,193,106,0.3);
+      color: var(--green);
+      padding: 12px 16px; border-radius: 10px;
+      font-size: 13px; margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 24px; align-items: flex-start; padding-top: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="left-content">
+      <div class="left-logo">💬</div>
+      <h1>Papo<span>Reto</span></h1>
+      <p>A plataforma de mensagens para quem fala direto ao ponto.</p>
+      <div class="left-features">
+        <div class="left-feature">
+          <span class="left-feature-icon">⚡</span>
+          <div class="left-feature-text">
+            <p>Mensagens em tempo real</p>
+            <p>Entrega instantânea garantida</p>
+          </div>
+        </div>
+        <div class="left-feature">
+          <span class="left-feature-icon">🔒</span>
+          <div class="left-feature-text">
+            <p>Seguro e privado</p>
+            <p>Autenticação com Supabase Auth</p>
+          </div>
+        </div>
+        <div class="left-feature">
+          <span class="left-feature-icon">🌍</span>
+          <div class="left-feature-text">
+            <p>Suporte internacional</p>
+            <p>África, Europa e América</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="login-card">
+      <a href="index.html" class="back-link">← Voltar ao início</a>
+
+      <h2 class="card-title">Bem-vindo de volta 👋</h2>
+      <p class="card-sub">Entre na sua conta para continuar</p>
+
+      <div class="error-msg" id="error-msg"></div>
+      <div class="success-msg" id="success-msg"></div>
+
+      <form id="login-form" onsubmit="handleLogin(event)" novalidate>
+        <div class="form-group">
+          <label>E-mail</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+        </div>
+
+        <div class="form-footer-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember-me" checked>
+            Lembrar de mim
+          </label>
+          <a href="#" class="forgot-link">Esqueci a senha</a>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-login">
+          <span class="spinner" id="spinner"></span>
+          <span id="btn-text">Entrar na conta →</span>
+        </button>
+      </form>
+
+      <div class="divider">ou</div>
+
+      <div class="register-link">
+        Não tem conta? <a href="cadastro.html">Criar conta grátis</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── SUPABASE CONFIG ──
+    const SUPABASE_URL = localStorage.getItem('pr_url') || 'https://SEU_PROJETO.supabase.co';
+    const SUPABASE_KEY = localStorage.getItem('pr_key') || 'SUA_ANON_KEY';
+    const DEMO_MODE = SUPABASE_URL.includes('SEU_PROJETO');
+
+    // Verificar se já está logado
+    window.addEventListener('load', () => {
+      const session = localStorage.getItem('pr_session');
+      if (session) {
+        try {
+          const s = JSON.parse(session);
+          if (s && s.id) { window.location.href = 'chat.html'; return; }
+        } catch(e) {}
+      }
+    });
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg; el.style.display = 'block';
+      document.getElementById('success-msg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('success-msg');
+      el.textContent = msg; el.style.display = 'block';
+      document.getElementById('error-msg').style.display = 'none';
+    }
+
+    function setLoading(loading) {
+      document.getElementById('spinner').style.display = loading ? 'block' : 'none';
+      document.getElementById('btn-text').textContent = loading ? 'Entrando...' : 'Entrar na conta →';
+      document.getElementById('btn-login').disabled = loading;
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) { showError('Preencha todos os campos.'); return; }
+      if (!email.includes('@')) { showError('E-mail inválido.'); return; }
+      if (password.length < 6) { showError('Senha deve ter pelo menos 6 caracteres.'); return; }
+
+      setLoading(true);
+
+      if (DEMO_MODE) {
+        // Demo: aceitar qualquer login
+        await new Promise(r => setTimeout(r, 1200));
+        const demoUsers = JSON.parse(localStorage.getItem('pr_users') || '[]');
+        const user = demoUsers.find(u => u.email === email);
+        if (user && user.password === password) {
+          const session = { id: user.id, name: user.name, email: user.email, phone: user.phone, initials: getInitials(user.name) };
+          localStorage.setItem('pr_session', JSON.stringify(session));
+          showSuccess('Login realizado! Redirecionando...');
+          setTimeout(() => window.location.href = 'chat.html', 800);
+        } else if (email === 'demo@paporeto.com' && password === '123456') {
+          // Conta demo padrão
+          const session = { id: 'demo_user', name: 'Utilizador Demo', email, phone: '+258840000000', initials: 'UD' };
+          localStorage.setItem('pr_session', JSON.stringify(session));
+          showSuccess('Login demo realizado! Redirecionando...');
+          setTimeout(() => window.location.href = 'chat.html', 800);
+        } else {
+          setLoading(false);
+          showError('E-mail ou senha incorretos. Tente demo@paporeto.com / 123456');
+        }
+        return;
+      }
+
+      // Supabase Auth
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error_description || data.msg || 'Erro ao entrar');
+
+        // Buscar dados do user
+        const userRes = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${data.user.id}&select=*`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${data.access_token}` }
+        });
+        const users = await userRes.json();
+        const userProfile = users[0] || {};
+
+        const session = {
+          id: data.user.id,
+          name: userProfile.name || email.split('@')[0],
+          email,
+          phone: userProfile.phone || '',
+          token: data.access_token,
+          refresh_token: data.refresh_token,
+          initials: getInitials(userProfile.name || email)
+        };
+        localStorage.setItem('pr_session', JSON.stringify(session));
+        showSuccess('Login realizado! Redirecionando...');
+        setTimeout(() => window.location.href = 'chat.html', 800);
+      } catch(err) {
+        setLoading(false);
+        showError(err.message);
+      }
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+    }
+
+    // Enter key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const form = document.getElementById('login-form');
+        if (form) form.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

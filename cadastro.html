@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PapoReto — Criar Conta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #00C16A; --green-dark: #009E56;
+      --green-glow: rgba(0,193,106,0.2);
+      --bg: #0A0F14; --surface: #111820; --surface2: #19232F;
+      --border: #1E2A38; --text: #E8F0F8;
+      --muted: #6B7F94; --subtle: #2E3D50;
+      --red: #FF4757; --orange: #FF8C42;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 10%, rgba(0,193,106,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 10% 90%, rgba(88,166,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .page-wrap {
+      width: 100%; max-width: 560px;
+      position: relative; z-index: 1;
+    }
+
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .logo-link {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+
+    .logo-link h1 { font-size: 20px; font-weight: 800; color: var(--text); }
+    .logo-link h1 span { color: var(--green); }
+
+    .login-link { font-size: 13px; color: var(--muted); }
+    .login-link a { color: var(--green); text-decoration: none; font-weight: 600; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      animation: cardIn 0.4s ease;
+    }
+
+    @keyframes cardIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    .card-header { margin-bottom: 32px; }
+    .card-header h2 { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 6px; }
+    .card-header p { font-size: 14px; color: var(--muted); }
+
+    /* STEPS INDICATOR */
+    .steps-bar {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 32px;
+    }
+
+    .step {
+      display: flex; align-items: center; gap: 8px;
+      flex: 1;
+    }
+
+    .step-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      border: 2px solid var(--border);
+      background: var(--surface2); color: var(--muted);
+      flex-shrink: 0; transition: all 0.3s;
+      z-index: 1;
+    }
+
+    .step.active .step-dot {
+      border-color: var(--green);
+      background: rgba(0,193,106,0.12);
+      color: var(--green);
+    }
+
+    .step.done .step-dot {
+      border-color: var(--green);
+      background: var(--green);
+      color: #000;
+    }
+
+    .step-label { font-size: 11px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .step.active .step-label { color: var(--green); }
+    .step.done .step-label { color: var(--text); }
+
+    .step-line {
+      flex: 1; height: 2px; background: var(--border);
+      margin: 0 8px; transition: background 0.3s;
+    }
+    .step-line.done { background: var(--green); }
+
+    /* ── FORM ── */
+    .form-section { display: none; }
+    .form-section.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 8px;
+    }
+
+    .input-wrap { position: relative; }
+    .input-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px; color: var(--muted); pointer-events: none;
+    }
+    .input-valid-icon {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px; display: none;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 13px 44px 13px 44px;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 14px; outline: none; transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .form-group select { padding-left: 44px; cursor: pointer; }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,193,106,0.1);
+    }
+    .form-group input.valid { border-color: var(--green); }
+    .form-group input.invalid { border-color: var(--red); }
+    .form-group input::placeholder { color: var(--subtle); }
+
+    .field-error {
+      font-size: 12px; color: var(--red);
+      margin-top: 6px; display: none;
+    }
+
+    /* PHONE ROW */
+    .phone-row { display: flex; gap: 10px; }
+    .phone-row .select-wrap { width: 160px; flex-shrink: 0; }
+    .phone-row .input-wrap { flex: 1; }
+
+    /* PASSWORD STRENGTH */
+    .password-strength { margin-top: 10px; }
+    .strength-bar {
+      display: flex; gap: 4px; margin-bottom: 6px;
+    }
+    .strength-seg {
+      flex: 1; height: 4px; border-radius: 2px;
+      background: var(--border); transition: background 0.3s;
+    }
+    .strength-text { font-size: 11px; color: var(--muted); }
+
+    /* AVATAR PICKER */
+    .avatar-picker {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px;
+      background: var(--surface2);
+      border: 1.5px dashed var(--border);
+      border-radius: 12px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .avatar-picker:hover { border-color: var(--green); }
+
+    .avatar-preview {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(0,193,106,0.15);
+      border: 2px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 700; color: var(--green);
+      flex-shrink: 0; overflow: hidden;
+    }
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    .avatar-info p:first-child { font-size: 14px; font-weight: 600; }
+    .avatar-info p:last-child { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* TERMS */
+    .terms-check {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 16px;
+      background: rgba(0,193,106,0.04);
+      border: 1px solid rgba(0,193,106,0.1);
+      border-radius: 12px; cursor: pointer; margin-bottom: 24px;
+    }
+    .terms-check input[type="checkbox"] {
+      width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0;
+      accent-color: var(--green); cursor: pointer;
+    }
+    .terms-check p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .terms-check a { color: var(--green); }
+
+    /* BUTTONS */
+    .btn-row { display: flex; gap: 12px; }
+
+    .btn-back {
+      padding: 14px 24px;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text);
+      font-family: 'Sora', sans-serif; font-size: 14px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-back:hover { border-color: var(--muted); }
+
+    .btn-next {
+      flex: 1; padding: 14px;
+      background: var(--green); color: #000;
+      font-weight: 700; font-family: 'Sora', sans-serif;
+      font-size: 15px; border: none; border-radius: 12px;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 0 30px var(--green-glow);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-next:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ERROR ── */
+    .error-msg {
+      display: none;
+      background: rgba(255,71,87,0.08);
+      border: 1px solid rgba(255,71,87,0.3);
+      color: var(--red); padding: 12px 16px;
+      border-radius: 10px; font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    /* SUCCESS SCREEN */
+    .success-screen {
+      display: none; text-align: center; padding: 20px 0;
+    }
+    .success-screen.active { display: block; animation: fadeIn 0.5s ease; }
+
+    .success-icon {
+      width: 80px; height: 80px;
+      background: rgba(0,193,106,0.12);
+      border: 2px solid var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; margin: 0 auto 24px;
+    }
+
+    .success-screen h3 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+    .success-screen p { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+
+    .user-id-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px; color: var(--green);
+      margin-bottom: 28px; word-break: break-all;
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 24px; }
+      .phone-row { flex-direction: column; }
+      .phone-row .select-wrap { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <a href="index.html" class="logo-link">
+        <div class="logo-icon">💬</div>
+        <h1>Papo<span>Reto</span></h1>
+      </a>
+      <div class="login-link">Já tem conta? <a href="login.html">Entrar</a></div>
+    </div>
+
+    <!-- CARD -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Criar conta grátis ✦</h2>
+        <p>Preencha os dados abaixo para começar a conversar</p>
+      </div>
+
+      <!-- STEPS -->
+      <div class="steps-bar" id="steps-bar">
+        <div class="step active" id="step-1">
+          <div class="step-dot">1</div>
+          <span class="step-label">Dados pessoais</span>
+        </div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step" id="step-2">
+          <div class="step-dot">2</div>
+          <span class="step-label">Telefone</span>
+        </div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step" id="step-3">
+          <div class="step-dot">3</div>
+          <span class="step-label">Segurança</span>
+        </div>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+
+      <!-- SECTION 1: Dados Pessoais -->
+      <div class="form-section active" id="section-1">
+        <div class="form-group">
+          <label>Nome Completo</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="reg-name" placeholder="Seu nome completo"
+              oninput="updateAvatarPreview()" autocomplete="name">
+            <span class="input-valid-icon" id="name-valid-icon">✅</span>
+          </div>
+          <div class="field-error" id="name-error">Por favor insira o nome completo</div>
+        </div>
+
+        <div class="form-group">
+          <label>E-mail</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input type="email" id="reg-email" placeholder="seu@email.com"
+              oninput="validateEmail()" autocomplete="email">
+            <span class="input-valid-icon" id="email-valid-icon">✅</span>
+          </div>
+          <div class="field-error" id="email-error">E-mail inválido</div>
+        </div>
+
+        <div class="form-group">
+          <label>Foto de Perfil (opcional)</label>
+          <div class="avatar-picker" onclick="document.getElementById('avatar-input').click()">
+            <div class="avatar-preview" id="avatar-preview">?</div>
+            <div class="avatar-info">
+              <p>Escolher foto</p>
+              <p>JPG, PNG ou GIF — máx. 5MB</p>
+            </div>
+          </div>
+          <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatar(event)">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-next" onclick="goToStep(2)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Telefone -->
+      <div class="form-section" id="section-2">
+        <div class="form-group">
+          <label>País e Código Internacional</label>
+          <div class="phone-row">
+            <div class="select-wrap">
+              <div class="input-wrap">
+                <span class="input-icon">🌍</span>
+                <select id="country-code" onchange="validatePhone()">
+                  <optgroup label="África">
+                    <option value="+258" data-regex="^[0-9]{9}$" data-flag="🇲🇿">🇲🇿 +258 Moçambique</option>
+                    <option value="+27" data-regex="^[0-9]{9,10}$" data-flag="🇿🇦">🇿🇦 +27 África do Sul</option>
+                    <option value="+244" data-regex="^[0-9]{9}$" data-flag="🇦🇴">🇦🇴 +244 Angola</option>
+                    <option value="+238" data-regex="^[0-9]{7}$" data-flag="🇨🇻">🇨🇻 +238 Cabo Verde</option>
+                    <option value="+234" data-regex="^[0-9]{10}$" data-flag="🇳🇬">🇳🇬 +234 Nigéria</option>
+                    <option value="+254" data-regex="^[0-9]{9}$" data-flag="🇰🇪">🇰🇪 +254 Quénia</option>
+                    <option value="+233" data-regex="^[0-9]{9}$" data-flag="🇬🇭">🇬🇭 +233 Gana</option>
+                    <option value="+221" data-regex="^[0-9]{9}$" data-flag="🇸🇳">🇸🇳 +221 Senegal</option>
+                    <option value="+243" data-regex="^[0-9]{9}$" data-flag="🇨🇩">🇨🇩 +243 Congo RD</option>
+                    <option value="+212" data-regex="^[0-9]{9}$" data-flag="🇲🇦">🇲🇦 +212 Marrocos</option>
+                    <option value="+216" data-regex="^[0-9]{8}$" data-flag="🇹🇳">🇹🇳 +216 Tunísia</option>
+                    <option value="+20" data-regex="^[0-9]{10}$" data-flag="🇪🇬">🇪🇬 +20 Egito</option>
+                    <option value="+237" data-regex="^[0-9]{9}$" data-flag="🇨🇲">🇨🇲 +237 Camarões</option>
+                    <option value="+251" data-regex="^[0-9]{9}$" data-flag="🇪🇹">🇪🇹 +251 Etiópia</option>
+                    <option value="+255" data-regex="^[0-9]{9}$" data-flag="🇹🇿">🇹🇿 +255 Tanzânia</option>
+                  </optgroup>
+                  <optgroup label="Europa">
+                    <option value="+351" data-regex="^[0-9]{9}$" data-flag="🇵🇹">🇵🇹 +351 Portugal</option>
+                    <option value="+34" data-regex="^[0-9]{9}$" data-flag="🇪🇸">🇪🇸 +34 Espanha</option>
+                    <option value="+44" data-regex="^[0-9]{10}$" data-flag="🇬🇧">🇬🇧 +44 Reino Unido</option>
+                    <option value="+33" data-regex="^[0-9]{9}$" data-flag="🇫🇷">🇫🇷 +33 França</option>
+                    <option value="+49" data-regex="^[0-9]{10,11}$" data-flag="🇩🇪">🇩🇪 +49 Alemanha</option>
+                    <option value="+39" data-regex="^[0-9]{9,10}$" data-flag="🇮🇹">🇮🇹 +39 Itália</option>
+                    <option value="+31" data-regex="^[0-9]{9}$" data-flag="🇳🇱">🇳🇱 +31 Países Baixos</option>
+                  </optgroup>
+                  <optgroup label="Américas">
+                    <option value="+1" data-regex="^[0-9]{10}$" data-flag="🇺🇸">🇺🇸 +1 EUA / Canadá</option>
+                    <option value="+55" data-regex="^[0-9]{10,11}$" data-flag="🇧🇷">🇧🇷 +55 Brasil</option>
+                    <option value="+52" data-regex="^[0-9]{10}$" data-flag="🇲🇽">🇲🇽 +52 México</option>
+                    <option value="+54" data-regex="^[0-9]{10}$" data-flag="🇦🇷">🇦🇷 +54 Argentina</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="input-wrap">
+              <span class="input-icon">📱</span>
+              <input type="tel" id="reg-phone" placeholder="Número sem código"
+                oninput="validatePhone()">
+              <span class="input-valid-icon" id="phone-valid-icon">✅</span>
+            </div>
+          </div>
+          <div class="field-error" id="phone-error">Número inválido para este país</div>
+          <div id="phone-hint" style="font-size:12px;color:var(--muted);margin-top:6px"></div>
+        </div>
+
+        <div style="padding:14px;background:rgba(0,193,106,0.05);border:1px solid rgba(0,193,106,0.15);border-radius:12px;margin-bottom:20px">
+          <p style="font-size:12px;color:var(--muted);line-height:1.6">
+            🔐 Seu ID único será gerado a partir do número completo: <br>
+            <span id="full-phone-preview" style="color:var(--green);font-family:'Space Mono',monospace;font-size:13px">+258 xxxxxxxxx</span>
+          </p>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-back" onclick="goToStep(1)">← Voltar</button>
+          <button class="btn-next" onclick="goToStep(3)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Senha -->
+      <div class="form-section" id="section-3">
+        <div class="form-group">
+          <label>Senha</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres"
+              oninput="updatePasswordStrength()">
+          </div>
+          <div class="password-strength" id="strength-container">
+            <div class="strength-bar">
+              <div class="strength-seg" id="seg-1"></div>
+              <div class="strength-seg" id="seg-2"></div>
+              <div class="strength-seg" id="seg-3"></div>
+              <div class="strength-seg" id="seg-4"></div>
+            </div>
+            <div class="strength-text" id="strength-text">Digite uma senha</div>
+          </div>
+          <div class="field-error" id="pass-error">Senha muito curta</div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar Senha</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-password2" placeholder="Repita a senha"
+              oninput="validatePasswordMatch()">
+            <span class="input-valid-icon" id="pass2-valid-icon">✅</span>
+          </div>
+          <div class="field-error" id="pass2-error">As senhas não coincidem</div>
+        </div>
+
+        <label class="terms-check">
+          <input type="checkbox" id="terms-check">
+          <p>Li e aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a> do PapoReto.</p>
+        </label>
+
+        <div class="btn-row">
+          <button class="btn-back" onclick="goToStep(2)">← Voltar</button>
+          <button class="btn-next" id="btn-register" onclick="handleRegister()">
+            <span class="spinner" id="spinner"></span>
+            <span id="btn-text">Criar minha conta ✦</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="success-screen">
+        <div class="success-icon">✅</div>
+        <h3>Conta criada com sucesso!</h3>
+        <p>Bem-vindo ao PapoReto! Sua conta foi criada. Seu ID único é:</p>
+        <div class="user-id-box" id="user-id-display">—</div>
+        <button class="btn-next" onclick="window.location.href='chat.html'">
+          Ir para o Chat →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── CONFIG ──
+    const SUPABASE_URL = localStorage.getItem('pr_url') || 'https://SEU_PROJETO.supabase.co';
+    const SUPABASE_KEY = localStorage.getItem('pr_key') || 'SUA_ANON_KEY';
+    const DEMO_MODE = SUPABASE_URL.includes('SEU_PROJETO');
+    let currentStep = 1;
+    let avatarBase64 = null;
+
+    // ── AVATAR ──
+    function updateAvatarPreview() {
+      const name = document.getElementById('reg-name').value.trim();
+      const el = document.getElementById('avatar-preview');
+      if (!avatarBase64) {
+        el.innerHTML = getInitials(name) || '?';
+      }
+    }
+
+    function handleAvatar(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        avatarBase64 = ev.target.result;
+        const el = document.getElementById('avatar-preview');
+        el.innerHTML = `<img src="${avatarBase64}" alt="avatar">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ── PHONE ──
+    function validatePhone() {
+      const sel = document.getElementById('country-code');
+      const opt = sel.selectedOptions[0];
+      const code = sel.value;
+      const phone = document.getElementById('reg-phone').value.trim();
+      const regex = new RegExp(opt.dataset.regex);
+      const valid = regex.test(phone);
+
+      const input = document.getElementById('reg-phone');
+      const icon = document.getElementById('phone-valid-icon');
+      const err = document.getElementById('phone-error');
+
+      input.className = phone ? (valid ? 'valid' : 'invalid') : '';
+      icon.style.display = valid ? 'block' : 'none';
+      err.style.display = (!valid && phone) ? 'block' : 'none';
+
+      const full = phone ? `${code} ${phone}` : `${code} xxxxxxxxx`;
+      document.getElementById('full-phone-preview').textContent = full;
+
+      const hints = { '+258':'9 dígitos (ex: 841234567)', '+27':'9 ou 10 dígitos', '+1':'10 dígitos', '+351':'9 dígitos', '+55':'10 ou 11 dígitos' };
+      document.getElementById('phone-hint').textContent = hints[code] || 'Veja o formato correto para este país';
+
+      return valid;
+    }
+
+    // ── EMAIL ──
+    function validateEmail() {
+      const email = document.getElementById('reg-email').value.trim();
+      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const input = document.getElementById('reg-email');
+      const icon = document.getElementById('email-valid-icon');
+      const err = document.getElementById('email-error');
+      input.className = email ? (valid ? 'valid' : 'invalid') : '';
+      icon.style.display = valid ? 'block' : 'none';
+      err.style.display = (!valid && email) ? 'block' : 'none';
+      return valid;
+    }
+
+    // ── PASSWORD ──
+    function updatePasswordStrength() {
+      const pass = document.getElementById('reg-password').value;
+      let score = 0;
+      if (pass.length >= 6) score++;
+      if (pass.length >= 10) score++;
+      if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score++;
+      if (/[0-9!@#$%^&*]/.test(pass)) score++;
+
+      const colors = ['', '#FF4757', '#FF8C42', '#FFD700', '#00C16A'];
+      const labels = ['', 'Muito fraca', 'Fraca', 'Boa', 'Muito forte'];
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`seg-${i}`).style.background = i <= score ? colors[score] : 'var(--border)';
+      }
+      document.getElementById('strength-text').textContent = pass ? labels[score] || 'Muito fraca' : 'Digite uma senha';
+      document.getElementById('strength-text').style.color = pass ? colors[score] || '#FF4757' : 'var(--muted)';
+    }
+
+    function validatePasswordMatch() {
+      const p1 = document.getElementById('reg-password').value;
+      const p2 = document.getElementById('reg-password2').value;
+      const icon = document.getElementById('pass2-valid-icon');
+      const err = document.getElementById('pass2-error');
+      const match = p1 === p2 && p2.length > 0;
+      icon.style.display = match ? 'block' : 'none';
+      err.style.display = (!match && p2) ? 'block' : 'none';
+      return match;
+    }
+
+    // ── STEPS ──
+    function goToStep(step) {
+      if (step > currentStep) {
+        if (!validateStep(currentStep)) return;
+      }
+      document.getElementById(`section-${currentStep}`).classList.remove('active');
+      document.getElementById(`step-${currentStep}`).classList.remove('active');
+      if (step > currentStep) document.getElementById(`step-${currentStep}`).classList.add('done');
+
+      currentStep = step;
+      document.getElementById(`section-${step}`).classList.add('active');
+      document.getElementById(`step-${step}`).classList.add('active');
+      if (step > 1) document.getElementById(`line-${step-1}`).classList.add('done');
+
+      // scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep(step) {
+      const err = document.getElementById('error-msg');
+      err.style.display = 'none';
+
+      if (step === 1) {
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        if (name.split(' ').length < 2) {
+          document.getElementById('name-error').style.display = 'block';
+          showError('Por favor insira o nome completo (nome e apelido).');
+          return false;
+        }
+        if (!validateEmail()) {
+          showError('Por favor insira um e-mail válido.');
+          return false;
+        }
+      }
+      if (step === 2) {
+        if (!validatePhone()) {
+          showError('Por favor insira um número de telefone válido.');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg; el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ── REGISTER ──
+    async function handleRegister() {
+      const err = document.getElementById('error-msg');
+      err.style.display = 'none';
+
+      const pass = document.getElementById('reg-password').value;
+      const pass2 = document.getElementById('reg-password2').value;
+      const terms = document.getElementById('terms-check').checked;
+
+      if (pass.length < 6) { showError('A senha deve ter pelo menos 6 caracteres.'); return; }
+      if (pass !== pass2) { showError('As senhas não coincidem.'); return; }
+      if (!terms) { showError('Você precisa aceitar os termos de uso.'); return; }
+
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const countryCode = document.getElementById('country-code').value;
+      const phone = document.getElementById('reg-phone').value.trim();
+      const fullPhone = countryCode + phone;
+      const userId = generateUserId(fullPhone);
+
+      // Loading
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('btn-text').textContent = 'Criando conta...';
+      document.getElementById('btn-register').disabled = true;
+
+      if (DEMO_MODE) {
+        await new Promise(r => setTimeout(r, 1500));
+
+        const users = JSON.parse(localStorage.getItem('pr_users') || '[]');
+        if (users.find(u => u.email === email)) {
+          showError('Este e-mail já está cadastrado.');
+          document.getElementById('spinner').style.display = 'none';
+          document.getElementById('btn-text').textContent = 'Criar minha conta ✦';
+          document.getElementById('btn-register').disabled = false;
+          return;
+        }
+
+        const newUser = {
+          id: userId, name, email, phone: fullPhone,
+          country_code: countryCode, password,
+          profile_url: avatarBase64 || null,
+          last_seen: new Date().toISOString(),
+          initials: getInitials(name),
+          color: stringToColor(userId)
+        };
+
+        users.push(newUser);
+        localStorage.setItem('pr_users', JSON.stringify(users));
+
+        // Auto login
+        const session = { id: userId, name, email, phone: fullPhone, initials: getInitials(name) };
+        localStorage.setItem('pr_session', JSON.stringify(session));
+
+        showSuccess(userId);
+        return;
+      }
+
+      // Supabase
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+          body: JSON.stringify({ email, password: pass })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error_description || data.msg || 'Erro ao criar conta');
+
+        await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${data.access_token || SUPABASE_KEY}`
+          },
+          body: JSON.stringify({
+            id: data.user.id, name, email, phone: fullPhone,
+            country_code: countryCode, last_seen: new Date().toISOString()
+          })
+        });
+
+        const session = {
+          id: data.user.id, name, email, phone: fullPhone,
+          token: data.access_token, initials: getInitials(name)
+        };
+        localStorage.setItem('pr_session', JSON.stringify(session));
+        showSuccess(data.user.id);
+      } catch(e) {
+        showError(e.message);
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('btn-text').textContent = 'Criar minha conta ✦';
+        document.getElementById('btn-register').disabled = false;
+      }
+    }
+
+    function showSuccess(userId) {
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('steps-bar').style.display = 'none';
+      document.getElementById('success-screen').classList.add('active');
+      document.getElementById('user-id-display').textContent = userId;
+    }
+
+    // ── UTILS ──
+    function generateUserId(phone) {
+      const clean = phone.replace(/\D/g, '');
+      return 'PR_' + clean;
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+    }
+
+    function stringToColor(str) {
+      const colors = ['#00C16A','#58A6FF','#BC8CFF','#FF8C42','#FF4757','#FFD700','#00BCD4'];
+      let hash = 0;
+      for (const c of str) hash = c.charCodeAt(0) + ((hash<<5)-hash);
+      return colors[Math.abs(hash) % colors.length];
+    }
+  </script>
+</body>
+</html>
