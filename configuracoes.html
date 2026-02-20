@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <script src="config.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PapoReto — Configurações</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:#00C16A; --green-dark:#009E56; --green-glow:rgba(0,193,106,0.2);
+      --bg:#0A0F14; --surface:#111820; --surface2:#19232F; --surface3:#1F2D3E;
+      --border:#1E2A38; --text:#E8F0F8; --muted:#6B7F94; --subtle:#2E3D50;
+      --red:#FF4757; --blue:#58A6FF; --orange:#FF8C42; --purple:#BC8CFF;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 58px; background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 24px; gap: 14px;
+      position: sticky; top: 0; z-index: 20;
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      padding: 8px 14px; border-radius: 9px; border: none;
+      background: transparent; cursor: pointer; font-family: 'Sora', sans-serif; transition: all .2s;
+    }
+    .back-btn:hover { color: var(--text); background: var(--surface2); }
+    .page-title { font-size: 17px; font-weight: 700; }
+    .topbar-right { margin-left: auto; }
+    .btn-sm {
+      padding: 9px 18px; border: none; border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-sm.primary { background: var(--green); color: #000; }
+    .btn-sm.primary:hover { background: var(--green-dark); }
+
+    /* ── LAYOUT ── */
+    .page-layout {
+      display: grid; grid-template-columns: 260px 1fr;
+      height: calc(100vh - 58px);
+    }
+
+    /* ── NAV SIDEBAR ── */
+    .nav-sidebar {
+      background: var(--surface); border-right: 1px solid var(--border);
+      padding: 20px 12px; display: flex; flex-direction: column; gap: 4px;
+      overflow-y: auto;
+    }
+    .nav-section-label {
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1.2px;
+      padding: 4px 12px 8px; font-family: 'Space Mono', monospace;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: all .15s;
+      font-size: 14px; font-weight: 500; color: var(--muted);
+      border: none; background: transparent; font-family: 'Sora', sans-serif;
+      width: 100%; text-align: left;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: rgba(0,193,106,0.08); color: var(--green); font-weight: 600; }
+    .nav-item .ni-icon { font-size: 18px; flex-shrink: 0; }
+    .nav-item .ni-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      background: var(--red); color: #fff;
+      padding: 2px 6px; border-radius: 8px;
+    }
+
+    /* ── CONTENT ── */
+    .content-area { overflow-y: auto; padding: 32px 40px; }
+    .content-area::-webkit-scrollbar { width: 4px; }
+    .content-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .section-header { margin-bottom: 28px; }
+    .section-header h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .section-header p { font-size: 14px; color: var(--muted); }
+
+    /* ── SETTINGS CARD ── */
+    .settings-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; margin-bottom: 20px;
+    }
+    .card-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header-icon { font-size: 20px; }
+    .card-header-title { font-size: 15px; font-weight: 700; }
+    .card-header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── SETTING ROW ── */
+    .setting-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-row:hover { background: rgba(255,255,255,0.015); }
+    .sr-icon { font-size: 20px; flex-shrink: 0; width: 36px; text-align: center; }
+    .sr-info { flex: 1; }
+    .sr-label { font-size: 14px; font-weight: 600; }
+    .sr-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+    .sr-control { flex-shrink: 0; }
+
+    /* Toggle */
+    .toggle {
+      position: relative; width: 44px; height: 24px;
+      display: inline-block; cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: var(--border); border-radius: 24px;
+      transition: background .2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--green); }
+    .toggle-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; transition: transform .2s;
+      pointer-events: none;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+    /* Select */
+    .setting-select {
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'Sora', sans-serif; font-size: 13px;
+      padding: 8px 12px; outline: none; cursor: pointer;
+      transition: border-color .2s;
+    }
+    .setting-select:focus { border-color: var(--green); }
+
+    /* Input inline */
+    .setting-input {
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'Sora', sans-serif; font-size: 13px;
+      padding: 8px 12px; outline: none; width: 200px;
+      transition: border-color .2s;
+    }
+    .setting-input:focus { border-color: var(--green); }
+
+    /* Range */
+    .setting-range { width: 150px; accent-color: var(--green); }
+
+    /* Color swatches */
+    .color-swatches { display: flex; gap: 8px; }
+    .swatch {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer; transition: all .15s;
+    }
+    .swatch.active { border-color: var(--text); transform: scale(1.15); }
+
+    /* Button inline */
+    .btn-inline {
+      padding: 8px 16px; border: none; border-radius: 9px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-inline.green { background: var(--green); color: #000; }
+    .btn-inline.green:hover { background: var(--green-dark); }
+    .btn-inline.ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-inline.ghost:hover { background: var(--surface3); }
+    .btn-inline.danger { background: rgba(255,71,87,0.1); color: var(--red); border: 1px solid rgba(255,71,87,0.2); }
+    .btn-inline.danger:hover { background: rgba(255,71,87,0.2); }
+
+    /* Supabase config area */
+    .config-textarea {
+      width: 100%; padding: 12px 14px;
+      background: var(--surface2); border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'Space Mono', monospace; font-size: 12px;
+      outline: none; resize: vertical; min-height: 60px;
+      transition: border-color .2s; line-height: 1.5;
+    }
+    .config-textarea:focus { border-color: var(--green); }
+
+    /* App info */
+    .app-info-card {
+      background: linear-gradient(135deg, rgba(0,193,106,0.06), rgba(88,166,255,0.04));
+      border: 1px solid rgba(0,193,106,0.1);
+      border-radius: 16px; padding: 24px;
+      display: flex; align-items: center; gap: 20px; margin-bottom: 20px;
+    }
+    .app-info-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      border-radius: 18px; display: flex; align-items: center; justify-content: center;
+      font-size: 30px; flex-shrink: 0; box-shadow: 0 0 40px var(--green-glow);
+    }
+    .app-info-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .app-info-title span { color: var(--green); }
+    .app-info-version { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: 'Space Mono', monospace; }
+    .app-info-desc { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+
+    .shortcuts-table { width: 100%; border-collapse: collapse; }
+    .shortcuts-table tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+    .shortcuts-table td { padding: 12px 20px; font-size: 13px; }
+    .shortcuts-table td:first-child { color: var(--muted); }
+    .shortcut-key {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .key {
+      background: var(--surface3); border: 1px solid var(--border);
+      border-radius: 5px; padding: 2px 8px;
+      font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    }
+
+    /* TOAST */
+    .toast-wrap { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 9999; }
+    .toast { display: flex; align-items: center; gap: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 13px; min-width: 240px; animation: slideToast .3s ease; cursor: pointer; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+    @keyframes slideToast { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    .toast-icon { font-size: 20px; flex-shrink: 0; }
+    .toast-title { font-weight: 600; }
+    .toast-body { color: var(--muted); margin-top: 2px; font-size: 12px; }
+
+    @media (max-width: 768px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .nav-sidebar { display: none; }
+      .content-area { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="chat.html" class="back-btn">← Voltar ao Chat</a>
+  <div class="page-title">⚙️ Configurações</div>
+  <div class="topbar-right">
+    <button class="btn-sm primary" onclick="saveAll()">💾 Guardar tudo</button>
+  </div>
+</div>
+
+<div class="page-layout">
+
+  <!-- NAV SIDEBAR -->
+  <nav class="nav-sidebar">
+    <div class="nav-section-label">Geral</div>
+    <button class="nav-item active" onclick="showTab('aparencia', this)">
+      <span class="ni-icon">🎨</span> Aparência
+    </button>
+    <button class="nav-item" onclick="showTab('notificacoes', this)">
+      <span class="ni-icon">🔔</span> Notificações
+      <span class="ni-badge" id="badge-notif">3</span>
+    </button>
+    <button class="nav-item" onclick="showTab('privacidade', this)">
+      <span class="ni-icon">🔒</span> Privacidade
+    </button>
+    <button class="nav-item" onclick="showTab('chamadas', this)">
+      <span class="ni-icon">📞</span> Chamadas
+    </button>
+    <button class="nav-item" onclick="showTab('media', this)">
+      <span class="ni-icon">🖼️</span> Mídia e Armazenamento
+    </button>
+
+    <div class="nav-section-label" style="margin-top:12px">Técnico</div>
+    <button class="nav-item" onclick="showTab('conexao', this)">
+      <span class="ni-icon">🔌</span> Conexão
+    </button>
+    <button class="nav-item" onclick="showTab('atalhos', this)">
+      <span class="ni-icon">⌨️</span> Atalhos
+    </button>
+    <button class="nav-item" onclick="showTab('sobre', this)">
+      <span class="ni-icon">ℹ️</span> Sobre
+    </button>
+  </nav>
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- APARÊNCIA -->
+    <div class="tab-panel active" id="tab-aparencia">
+      <div class="section-header">
+        <h2>🎨 Aparência</h2>
+        <p>Personalize o visual da aplicação ao seu gosto.</p>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-header">
+          <span class="card-header-icon">🌗</span>
+          <div>
+            <div class="card-header-title">Tema</div>
+            <div class="card-header-sub">Escolha entre escuro, claro ou automático</div>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🌙</span>
+          <div class="sr-info">
+            <div class="sr-label">Tema da interface</div>
+            <div class="sr-desc">Define o tema visual da aplicação</div>
+          </div>
+          <div class="sr-control">
+            <select class="setting-select" id="pref-theme" onchange="applyTheme(this.value)">
+              <option value="dark" selected>Escuro</option>
+              <option value="light">Claro</option>
+              <option value="auto">Automático (sistema)</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🎨</span>
+          <div class="sr-info">
+            <div class="sr-label">Cor de destaque</div>
+            <div class="sr-desc">Cor principal da interface e botões</div>
+          </div>
+          <div class="sr-control">
+            <div class="color-swatches" id="accent-swatches">
+              <div class="swatch active" style="background:#00C16A" data-color="#00C16A" onclick="setAccent('#00C16A',this)" title="Verde"></div>
+              <div class="swatch" style="background:#58A6FF" data-color="#58A6FF" onclick="setAccent('#58A6FF',this)" title="Azul"></div>
+              <div class="swatch" style="background:#BC8CFF" data-color="#BC8CFF" onclick="setAccent('#BC8CFF',this)" title="Roxo"></div>
+              <div class="swatch" style="background:#FF8C42" data-color="#FF8C42" onclick="setAccent('#FF8C42',this)" title="Laranja"></div>
+              <div class="swatch" style="background:#FF4757" data-color="#FF4757" onclick="setAccent('#FF4757',this)" title="Vermelho"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-header">
+          <span class="card-header-icon">🔤</span>
+          <div>
+            <div class="card-header-title">Texto</div>
+            <div class="card-header-sub">Ajuste o tamanho e estilo da fonte</div>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔠</span>
+          <div class="sr-info">
+            <div class="sr-label">Tamanho da fonte</div>
+            <div class="sr-desc">Ajusta o tamanho do texto nas mensagens</div>
+          </div>
+          <div class="sr-control" style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--muted)">A</span>
+            <input type="range" class="setting-range" id="pref-font-size" min="12" max="20" value="14" oninput="document.getElementById('font-size-val').textContent=this.value+'px'">
+            <span style="font-size:16px;color:var(--muted)">A</span>
+            <span id="font-size-val" style="font-size:12px;color:var(--green);font-family:'Space Mono',monospace;min-width:28px">14px</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📝</span>
+          <div class="sr-info">
+            <div class="sr-label">Compactar conversas</div>
+            <div class="sr-desc">Reduz o espaçamento entre mensagens</div>
+          </div>
+          <div class="sr-control">
+            <label class="toggle">
+              <input type="checkbox" id="pref-compact">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">⏰</span>
+          <div class="sr-info">
+            <div class="sr-label">Mostrar hora nas mensagens</div>
+            <div class="sr-desc">Exibe o horário em todas as mensagens</div>
+          </div>
+          <div class="sr-control">
+            <label class="toggle">
+              <input type="checkbox" id="pref-show-time" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-header">
+          <span class="card-header-icon">💬</span>
+          <div>
+            <div class="card-header-title">Balões de Mensagem</div>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🟢</span>
+          <div class="sr-info">
+            <div class="sr-label">Estilo do balão</div>
+          </div>
+          <div class="sr-control">
+            <select class="setting-select" id="pref-bubble">
+              <option value="rounded">Arredondado</option>
+              <option value="square">Quadrado</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">✉️</span>
+          <div class="sr-info">
+            <div class="sr-label">Enviar com Enter</div>
+            <div class="sr-desc">Pressionar Enter envia a mensagem (Shift+Enter para nova linha)</div>
+          </div>
+          <div class="sr-control">
+            <label class="toggle">
+              <input type="checkbox" id="pref-enter-send" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="tab-panel" id="tab-notificacoes">
+      <div class="section-header">
+        <h2>🔔 Notificações</h2>
+        <p>Controle como e quando receber alertas.</p>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">💬</span><div><div class="card-header-title">Mensagens</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🔔</span>
+          <div class="sr-info"><div class="sr-label">Notificações de mensagens</div><div class="sr-desc">Receber alertas de novas mensagens</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-msgs" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">👥</span>
+          <div class="sr-info"><div class="sr-label">Notificações de grupos</div><div class="sr-desc">Alertas de mensagens em grupos</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-groups" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔵</span>
+          <div class="sr-info"><div class="sr-label">Notificações de status</div><div class="sr-desc">Quando contactos publicam novos status</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-status"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📞</span>
+          <div class="sr-info"><div class="sr-label">Notificações de chamadas</div><div class="sr-desc">Alertas de chamadas recebidas</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-calls" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">🔊</span><div><div class="card-header-title">Som</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🔔</span>
+          <div class="sr-info"><div class="sr-label">Som das notificações</div><div class="sr-desc">Tocar som ao receber mensagens</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-sound" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📳</span>
+          <div class="sr-info"><div class="sr-label">Vibração</div><div class="sr-desc">Vibrar ao receber mensagens (mobile)</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-vibrate" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔉</span>
+          <div class="sr-info"><div class="sr-label">Volume das notificações</div></div>
+          <div class="sr-control" style="display:flex;align-items:center;gap:10px">
+            <input type="range" class="setting-range" id="notif-volume" min="0" max="100" value="80" oninput="document.getElementById('vol-val').textContent=this.value+'%'">
+            <span id="vol-val" style="font-size:12px;color:var(--green);font-family:'Space Mono',monospace;min-width:36px">80%</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🎵</span>
+          <div class="sr-info"><div class="sr-label">Tom da notificação</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="notif-tone">
+              <option value="default">Padrão</option>
+              <option value="soft">Suave</option>
+              <option value="classic">Clássico</option>
+              <option value="none">Silencioso</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">🌙</span><div><div class="card-header-title">Não Perturbar</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🌙</span>
+          <div class="sr-info"><div class="sr-label">Modo Não Perturbar</div><div class="sr-desc">Silencia todas as notificações</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="notif-dnd"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">⏰</span>
+          <div class="sr-info"><div class="sr-label">Horário silencioso</div><div class="sr-desc">Silenciar automaticamente neste período</div></div>
+          <div class="sr-control" style="display:flex;align-items:center;gap:8px">
+            <input type="time" class="setting-input" id="dnd-start" value="22:00" style="width:100px">
+            <span style="color:var(--muted)">–</span>
+            <input type="time" class="setting-input" id="dnd-end" value="08:00" style="width:100px">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACIDADE -->
+    <div class="tab-panel" id="tab-privacidade">
+      <div class="section-header">
+        <h2>🔒 Privacidade</h2>
+        <p>Gerencie quem pode ver suas informações.</p>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">👁️</span><div><div class="card-header-title">Visibilidade</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🕐</span>
+          <div class="sr-info"><div class="sr-label">Mostrar "Visto por último"</div><div class="sr-desc">Contactos podem ver quando esteve online</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="priv-lastseen" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">✅</span>
+          <div class="sr-info"><div class="sr-label">Confirmações de leitura</div><div class="sr-desc">Mostrar visto duplo quando leu mensagem</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="priv-readreceipt" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">✏️</span>
+          <div class="sr-info"><div class="sr-label">Indicador "A escrever..."</div><div class="sr-desc">Mostrar quando está a digitar uma mensagem</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="priv-typing" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🟢</span>
+          <div class="sr-info"><div class="sr-label">Mostrar status online</div><div class="sr-desc">Indicar quando está activo na aplicação</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="priv-online" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">👤</span><div><div class="card-header-title">Perfil</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">📸</span>
+          <div class="sr-info"><div class="sr-label">Quem vê a minha foto</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="priv-photo">
+              <option value="all">Todos</option>
+              <option value="contacts">Só contactos</option>
+              <option value="none">Ninguém</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">ℹ️</span>
+          <div class="sr-info"><div class="sr-label">Quem vê a minha bio</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="priv-bio">
+              <option value="all">Todos</option>
+              <option value="contacts" selected>Só contactos</option>
+              <option value="none">Ninguém</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔵</span>
+          <div class="sr-info"><div class="sr-label">Quem vê o meu status</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="priv-status">
+              <option value="all">Todos</option>
+              <option value="contacts" selected>Só contactos</option>
+              <option value="none">Ninguém</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">👥</span><div><div class="card-header-title">Grupos</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">📩</span>
+          <div class="sr-info"><div class="sr-label">Quem pode adicionar-me a grupos</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="priv-groups">
+              <option value="all">Todos</option>
+              <option value="contacts" selected>Só contactos</option>
+              <option value="none">Ninguém</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAMADAS -->
+    <div class="tab-panel" id="tab-chamadas">
+      <div class="section-header">
+        <h2>📞 Chamadas</h2>
+        <p>Configure áudio, vídeo e comportamento das chamadas.</p>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">🎙️</span><div><div class="card-header-title">Áudio</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🎙️</span>
+          <div class="sr-info"><div class="sr-label">Microfone padrão</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="call-mic">
+              <option value="default">Microfone do sistema</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔊</span>
+          <div class="sr-info"><div class="sr-label">Altifalante padrão</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="call-speaker">
+              <option value="default">Altifalante do sistema</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔇</span>
+          <div class="sr-info"><div class="sr-label">Cancelamento de ruído</div><div class="sr-desc">Remove ruídos de fundo durante chamadas</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="call-noise" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📢</span>
+          <div class="sr-info"><div class="sr-label">Redução de eco</div><div class="sr-desc">Elimina eco durante chamadas</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="call-echo" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">📹</span><div><div class="card-header-title">Vídeo</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">📷</span>
+          <div class="sr-info"><div class="sr-label">Câmera padrão</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="call-cam">
+              <option value="default">Câmera do sistema</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🎞️</span>
+          <div class="sr-info"><div class="sr-label">Qualidade do vídeo</div></div>
+          <div class="sr-control">
+            <select class="setting-select" id="call-quality">
+              <option value="auto" selected>Automático</option>
+              <option value="hd">HD (720p)</option>
+              <option value="sd">SD (480p)</option>
+              <option value="low">Baixa (360p)</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🪞</span>
+          <div class="sr-info"><div class="sr-label">Espelhar câmera frontal</div><div class="sr-desc">Inverter imagem horizontalmente</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="call-mirror" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">⚙️</span><div><div class="card-header-title">Comportamento</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🔕</span>
+          <div class="sr-info"><div class="sr-label">Silenciar ao iniciar chamada</div><div class="sr-desc">Iniciar chamadas com microfone desligado</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="call-start-muted"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📳</span>
+          <div class="sr-info"><div class="sr-label">Vibrar ao receber chamada</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="call-vibrate" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÍDIA -->
+    <div class="tab-panel" id="tab-media">
+      <div class="section-header">
+        <h2>🖼️ Mídia e Armazenamento</h2>
+        <p>Gerencie como ficheiros são guardados e transferidos.</p>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">📥</span><div><div class="card-header-title">Download Automático</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🖼️</span>
+          <div class="sr-info"><div class="sr-label">Imagens</div><div class="sr-desc">Baixar imagens automaticamente</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="media-img" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🎵</span>
+          <div class="sr-info"><div class="sr-label">Áudios</div><div class="sr-desc">Baixar mensagens de voz automaticamente</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="media-audio" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🎬</span>
+          <div class="sr-info"><div class="sr-label">Vídeos</div><div class="sr-desc">Baixar vídeos automaticamente (usa mais dados)</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="media-video"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📄</span>
+          <div class="sr-info"><div class="sr-label">Documentos</div><div class="sr-desc">Baixar documentos automaticamente</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="media-docs"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">💾</span><div><div class="card-header-title">Armazenamento</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">📊</span>
+          <div class="sr-info">
+            <div class="sr-label">Dados usados</div>
+            <div class="sr-desc">Mensagens, media e cache local</div>
+          </div>
+          <div class="sr-control">
+            <span style="font-size:13px;color:var(--green);font-family:'Space Mono',monospace" id="storage-size">Calculando...</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🗑️</span>
+          <div class="sr-info"><div class="sr-label">Limpar cache</div><div class="sr-desc">Remove ficheiros temporários</div></div>
+          <div class="sr-control"><button class="btn-inline ghost" onclick="clearCache()">Limpar</button></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📤</span>
+          <div class="sr-info"><div class="sr-label">Exportar dados</div><div class="sr-desc">Baixar todos os seus dados em JSON</div></div>
+          <div class="sr-control"><button class="btn-inline green" onclick="exportData()">Exportar</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONEXÃO / SUPABASE -->
+    <div class="tab-panel" id="tab-conexao">
+      <div class="section-header">
+        <h2>🔌 Conexão</h2>
+        <p>Configure a ligação ao backend Supabase.</p>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">🗄️</span><div><div class="card-header-title">Supabase</div><div class="card-header-sub">Backend de dados e autenticação</div></div></div>
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+          <div class="sr-info" style="width:100%">
+            <div class="sr-label">URL do projeto</div>
+            <div class="sr-desc">Ex: https://xyzabc.supabase.co</div>
+          </div>
+          <textarea class="config-textarea" id="sb-url" placeholder="https://SEU_PROJETO.supabase.co"></textarea>
+        </div>
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+          <div class="sr-info" style="width:100%">
+            <div class="sr-label">Chave anônima (anon key)</div>
+            <div class="sr-desc">Encontrada em Project Settings → API</div>
+          </div>
+          <textarea class="config-textarea" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
+        </div>
+        <div class="setting-row" style="justify-content:flex-end;gap:10px">
+          <button class="btn-inline ghost" onclick="testConnection()">🔍 Testar ligação</button>
+          <button class="btn-inline green" onclick="saveSupabaseConfig()">💾 Guardar config</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">📡</span><div><div class="card-header-title">Rede</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🌐</span>
+          <div class="sr-info"><div class="sr-label">Modo offline</div><div class="sr-desc">Continuar a usar a app sem internet (mensagens em fila)</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="net-offline" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📲</span>
+          <div class="sr-info"><div class="sr-label">Economizar dados</div><div class="sr-desc">Reduzir qualidade de media para poupar dados</div></div>
+          <div class="sr-control"><label class="toggle"><input type="checkbox" id="net-save"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATALHOS -->
+    <div class="tab-panel" id="tab-atalhos">
+      <div class="section-header">
+        <h2>⌨️ Atalhos de Teclado</h2>
+        <p>Navegue mais rápido com estes atalhos.</p>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">💬</span><div><div class="card-header-title">Mensagens</div></div></div>
+        <table class="shortcuts-table">
+          <tr><td>Enviar mensagem</td><td><span class="shortcut-key"><span class="key">Enter</span></span></td></tr>
+          <tr><td>Nova linha</td><td><span class="shortcut-key"><span class="key">Shift</span> + <span class="key">Enter</span></span></td></tr>
+          <tr><td>Emoji picker</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">E</span></span></td></tr>
+          <tr><td>Anexar ficheiro</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">U</span></span></td></tr>
+          <tr><td>Responder mensagem</td><td><span class="shortcut-key"><span class="key">R</span></span></td></tr>
+          <tr><td>Copiar mensagem</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">C</span></span></td></tr>
+        </table>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">🧭</span><div><div class="card-header-title">Navegação</div></div></div>
+        <table class="shortcuts-table">
+          <tr><td>Pesquisar conversa</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">F</span></span></td></tr>
+          <tr><td>Nova conversa</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">N</span></span></td></tr>
+          <tr><td>Próxima conversa</td><td><span class="shortcut-key"><span class="key">Alt</span> + <span class="key">↓</span></span></td></tr>
+          <tr><td>Conversa anterior</td><td><span class="shortcut-key"><span class="key">Alt</span> + <span class="key">↑</span></span></td></tr>
+          <tr><td>Marcar como lida</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">Q</span></span></td></tr>
+          <tr><td>Abrir perfil</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">P</span></span></td></tr>
+          <tr><td>Abrir configurações</td><td><span class="shortcut-key"><span class="key">Ctrl</span> + <span class="key">,</span></span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- SOBRE -->
+    <div class="tab-panel" id="tab-sobre">
+      <div class="section-header">
+        <h2>ℹ️ Sobre o PapoReto</h2>
+        <p>Informações da aplicação e créditos.</p>
+      </div>
+      <div class="app-info-card">
+        <div class="app-info-icon">💬</div>
+        <div>
+          <div class="app-info-title">Papo<span>Reto</span></div>
+          <div class="app-info-version">Versão 1.0.0 • Build 2024.12</div>
+          <div class="app-info-desc">
+            A plataforma de mensagens para quem fala direto ao ponto.
+            Mensagens em tempo real, grupos, status, chamadas de voz e vídeo — tudo num só lugar, seguro e rápido.
+          </div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">🛠️</span><div><div class="card-header-title">Tecnologias</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🗄️</span>
+          <div class="sr-info"><div class="sr-label">Backend</div><div class="sr-desc">Supabase — Auth, Database e Realtime</div></div>
+          <div class="sr-control"><button class="btn-inline ghost" onclick="window.open('https://supabase.com','_blank')">↗ Site</button></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🌐</span>
+          <div class="sr-info"><div class="sr-label">Frontend</div><div class="sr-desc">HTML5, CSS3 e JavaScript Vanilla</div></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">📹</span>
+          <div class="sr-info"><div class="sr-label">Chamadas</div><div class="sr-desc">WebRTC — peer-to-peer direto no browser</div></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🔤</span>
+          <div class="sr-info"><div class="sr-label">Tipografia</div><div class="sr-desc">Sora + Space Mono (Google Fonts)</div></div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div class="card-header"><span class="card-header-icon">⚠️</span><div><div class="card-header-title">Zona de Perigo</div></div></div>
+        <div class="setting-row">
+          <span class="sr-icon">🗑️</span>
+          <div class="sr-info"><div class="sr-label">Limpar todos os dados locais</div><div class="sr-desc">Remove mensagens, grupos e preferências guardadas localmente</div></div>
+          <div class="sr-control"><button class="btn-inline danger" onclick="clearAllData()">Limpar dados</button></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">🚪</span>
+          <div class="sr-info"><div class="sr-label">Terminar sessão</div><div class="sr-desc">Sair da sua conta neste dispositivo</div></div>
+          <div class="sr-control"><button class="btn-inline danger" onclick="logout()">Sair</button></div>
+        </div>
+        <div class="setting-row">
+          <span class="sr-icon">💀</span>
+          <div class="sr-info"><div class="sr-label">Eliminar conta</div><div class="sr-desc">Ação permanente e irreversível</div></div>
+          <div class="sr-control"><button class="btn-inline danger" onclick="deleteAccount()">Eliminar conta</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+  let session = null;
+
+  window.addEventListener('load', () => {
+    session = PR.Session.require('login.html'); if (!session) return;
+    loadPrefs();
+    loadSbConfig();
+    calcStorageSize();
+    loadAudioDevices();
+    document.getElementById('badge-notif').style.display = 'none';
+  });
+
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  function loadPrefs() {
+    const prefs = JSON.parse(localStorage.getItem('pr_prefs') || '{}');
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+
+    set('notif-msgs', prefs.notif_msgs !== false);
+    set('notif-groups', prefs.notif_groups !== false);
+    set('notif-status', prefs.notif_status || false);
+    set('notif-calls', prefs.notif_calls !== false);
+    set('notif-sound', prefs.notif_sound !== false);
+    set('notif-vibrate', prefs.notif_vibrate !== false);
+    set('notif-dnd', prefs.notif_dnd || false);
+    set('priv-lastseen', prefs.priv_lastseen !== false);
+    set('priv-readreceipt', prefs.priv_readreceipt !== false);
+    set('priv-typing', prefs.priv_typing !== false);
+    set('priv-online', prefs.priv_online !== false);
+    set('call-noise', prefs.call_noise !== false);
+    set('call-echo', prefs.call_echo !== false);
+    set('call-mirror', prefs.call_mirror !== false);
+    set('call-start-muted', prefs.call_start_muted || false);
+    set('call-vibrate', prefs.call_vibrate !== false);
+    set('media-img', prefs.media_img !== false);
+    set('media-audio', prefs.media_audio !== false);
+    set('media-video', prefs.media_video || false);
+    set('media-docs', prefs.media_docs || false);
+    set('net-offline', prefs.net_offline !== false);
+    set('net-save', prefs.net_save || false);
+    set('pref-compact', prefs.compact || false);
+    set('pref-show-time', prefs.show_time !== false);
+    set('pref-enter-send', prefs.enter_send !== false);
+
+    if (prefs.font_size) {
+      document.getElementById('pref-font-size').value = prefs.font_size;
+      document.getElementById('font-size-val').textContent = prefs.font_size + 'px';
+    }
+    if (prefs.accent_color) setAccent(prefs.accent_color, null, true);
+  }
+
+  function collectPrefs() {
+    const get = id => { const el = document.getElementById(id); return el ? el.checked : false; };
+    return {
+      notif_msgs: get('notif-msgs'), notif_groups: get('notif-groups'),
+      notif_status: get('notif-status'), notif_calls: get('notif-calls'),
+      notif_sound: get('notif-sound'), notif_vibrate: get('notif-vibrate'),
+      notif_dnd: get('notif-dnd'),
+      priv_lastseen: get('priv-lastseen'), priv_readreceipt: get('priv-readreceipt'),
+      priv_typing: get('priv-typing'), priv_online: get('priv-online'),
+      call_noise: get('call-noise'), call_echo: get('call-echo'),
+      call_mirror: get('call-mirror'), call_start_muted: get('call-start-muted'),
+      call_vibrate: get('call-vibrate'),
+      media_img: get('media-img'), media_audio: get('media-audio'),
+      media_video: get('media-video'), media_docs: get('media-docs'),
+      net_offline: get('net-offline'), net_save: get('net-save'),
+      compact: get('pref-compact'), show_time: get('pref-show-time'),
+      enter_send: get('pref-enter-send'),
+      font_size: document.getElementById('pref-font-size').value,
+    };
+  }
+
+  function saveAll() {
+    const prefs = collectPrefs();
+    localStorage.setItem('pr_prefs', JSON.stringify(prefs));
+    toast('✅', 'Preferências guardadas!', 'Todas as configurações foram salvas.');
+  }
+
+  function loadSbConfig() {
+    const url = localStorage.getItem('pr_url') || '';
+    const key = localStorage.getItem('pr_key') || '';
+    document.getElementById('sb-url').value = url;
+    document.getElementById('sb-key').value = key;
+  }
+
+  function saveSupabaseConfig() {
+    const url = document.getElementById('sb-url').value.trim();
+    const key = document.getElementById('sb-key').value.trim();
+    if (!url || !key) { toast('⚠️', 'Erro', 'Preencha a URL e a chave do Supabase.'); return; }
+    localStorage.setItem('pr_url', url);
+    localStorage.setItem('pr_key', key);
+    toast('✅', 'Config Supabase guardada!', 'Recarregue para reconectar.');
+  }
+
+  async function testConnection() {
+    const url = document.getElementById('sb-url').value.trim();
+    const key = document.getElementById('sb-key').value.trim();
+    if (!url || !key) { toast('⚠️', 'Preencha os dados', 'URL e chave são obrigatórios.'); return; }
+    toast('🔍', 'A testar ligação...', '');
+    try {
+      const res = await fetch(`${url}/rest/v1/`, { headers: { 'apikey': key } });
+      if (res.ok || res.status === 404) toast('✅', 'Ligação bem-sucedida!', 'Supabase está acessível.');
+      else throw new Error(`Status: ${res.status}`);
+    } catch (e) {
+      toast('❌', 'Falha na ligação', e.message);
+    }
+  }
+
+  function calcStorageSize() {
+    let total = 0;
+    for (const k in localStorage) {
+      if (localStorage.hasOwnProperty(k) && k.startsWith('pr_')) {
+        total += (localStorage[k] || '').length * 2;
+      }
+    }
+    const kb = (total / 1024).toFixed(1);
+    document.getElementById('storage-size').textContent = kb + ' KB';
+  }
+
+  function clearCache() {
+    if (!confirm('Limpar cache? Isso não afeta mensagens ou dados de sessão.')) return;
+    localStorage.removeItem('pr_cache');
+    calcStorageSize();
+    toast('🗑️', 'Cache limpo!', '');
+  }
+
+  function exportData() {
+    const data = {
+      session,
+      messages: JSON.parse(localStorage.getItem('pr_demo_msgs') || '[]'),
+      groups: JSON.parse(localStorage.getItem('pr_groups') || '[]'),
+      prefs: JSON.parse(localStorage.getItem('pr_prefs') || '{}'),
+      exported_at: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `paporeto_export_${Date.now()}.json`;
+    a.click();
+    toast('📤', 'Dados exportados!', 'Ficheiro JSON baixado com sucesso.');
+  }
+
+  function clearAllData() {
+    if (!confirm('Limpar todos os dados locais? (mensagens, grupos, status)')) return;
+    ['pr_demo_msgs', 'pr_groups', 'pr_statuses', 'pr_blocked', 'pr_cache'].forEach(k => localStorage.removeItem(k));
+    toast('🗑️', 'Dados limpos', 'Todos os dados locais foram removidos.');
+    calcStorageSize();
+  }
+
+  function deleteAccount() {
+    if (!confirm('Tem CERTEZA que quer eliminar sua conta? Esta ação é permanente!')) return;
+    if (!confirm('Última confirmação: eliminar conta permanentemente?')) return;
+    ['pr_session', 'pr_users', 'pr_demo_msgs', 'pr_groups', 'pr_statuses', 'pr_blocked', 'pr_prefs', 'pr_url', 'pr_key'].forEach(k => localStorage.removeItem(k));
+    window.location.href = 'index.html';
+  }
+
+  function logout() {
+    if (!confirm('Sair da sua conta?')) return;
+    PR.Auth.signOut();
+  }
+
+  function setAccent(color, el, silent) {
+    document.documentElement.style.setProperty('--green', color);
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    document.documentElement.style.setProperty('--green-glow', `rgba(${r},${g},${b},0.2)`);
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    const match = document.querySelector(`.swatch[data-color="${color}"]`);
+    if (match) match.classList.add('active');
+    if (el && !silent) {
+      const prefs = JSON.parse(localStorage.getItem('pr_prefs') || '{}');
+      prefs.accent_color = color;
+      localStorage.setItem('pr_prefs', JSON.stringify(prefs));
+    }
+  }
+
+  function applyTheme(theme) {
+    toast('ℹ️', 'Tema', 'Múltiplos temas em breve. Actualmente apenas escuro disponível.');
+  }
+
+  function loadAudioDevices() {
+    if (!navigator.mediaDevices) return;
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      const mics = devices.filter(d => d.kind === 'audioinput');
+      const speakers = devices.filter(d => d.kind === 'audiooutput');
+      const cams = devices.filter(d => d.kind === 'videoinput');
+      const populate = (id, list) => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        list.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.deviceId;
+          opt.textContent = d.label || `Dispositivo ${sel.options.length + 1}`;
+          sel.appendChild(opt);
+        });
+      };
+      if (mics.length) populate('call-mic', mics);
+      if (speakers.length) populate('call-speaker', speakers);
+      if (cams.length) populate('call-cam', cams);
+    }).catch(() => {});
+  }
+
+  function toast(icon, title, body) {
+    const wrap = document.getElementById('toast-wrap');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<div class="toast-icon">${icon}</div><div><div class="toast-title">${title}</div>${body ? `<div class="toast-body">${body}</div>` : ''}</div>`;
+    t.onclick = () => t.remove();
+    wrap.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, 4500);
+  }
+</script>
+</body>
+</html>
