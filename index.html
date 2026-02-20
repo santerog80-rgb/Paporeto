@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PapoReto — Conecta de Verdade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #00C16A;
+      --green-dark: #009E56;
+      --green-glow: rgba(0,193,106,0.25);
+      --bg: #0A0F14;
+      --surface: #111820;
+      --border: #1E2A38;
+      --text: #E8F0F8;
+      --muted: #6B7F94;
+      --subtle: #2E3D50;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND GRID ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,193,106,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,193,106,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── GLOW ORBS ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(0,193,106,0.12) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
+      bottom: -150px; right: -150px;
+      animation: drift2 15s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { to { transform: translate(80px, 60px); } }
+    @keyframes drift2 { to { transform: translate(-60px, -80px); } }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 60px;
+      background: rgba(10,15,20,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--green), #00A855);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 30px var(--green-glow);
+    }
+
+    .nav-logo h1 {
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .nav-logo h1 span { color: var(--green); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .nav-links a {
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      color: var(--muted);
+    }
+    .nav-links a:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    .btn-nav-primary {
+      padding: 10px 24px;
+      background: var(--green);
+      color: #000 !important; font-weight: 700 !important;
+      border-radius: 10px;
+      box-shadow: 0 0 20px var(--green-glow);
+      transition: all 0.2s !important;
+    }
+    .btn-nav-primary:hover {
+      background: var(--green-dark) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 30px var(--green-glow) !important;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 120px 20px 60px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px;
+      background: rgba(0,193,106,0.08);
+      border: 1px solid rgba(0,193,106,0.25);
+      border-radius: 30px;
+      font-size: 13px; font-weight: 600;
+      color: var(--green);
+      margin-bottom: 32px;
+      font-family: 'Space Mono', monospace;
+      animation: fadeDown 0.6s ease 0.1s both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero h2 {
+      font-size: clamp(44px, 7vw, 84px);
+      font-weight: 800;
+      letter-spacing: -3px;
+      line-height: 1.05;
+      max-width: 800px;
+      animation: fadeDown 0.6s ease 0.2s both;
+    }
+
+    .hero h2 .highlight {
+      position: relative;
+      color: var(--green);
+      display: inline-block;
+    }
+
+    .hero h2 .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 3px;
+      background: var(--green);
+      border-radius: 2px;
+      box-shadow: 0 0 12px var(--green);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-top: 24px;
+      animation: fadeDown 0.6s ease 0.3s both;
+    }
+
+    .hero-btns {
+      display: flex; gap: 14px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+      animation: fadeDown 0.6s ease 0.4s both;
+    }
+
+    .btn-hero-primary {
+      padding: 16px 36px;
+      background: var(--green);
+      color: #000; font-weight: 700;
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      border: none; border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 40px var(--green-glow);
+      transition: all 0.2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-hero-primary:hover {
+      background: var(--green-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 50px var(--green-glow);
+    }
+
+    .btn-hero-secondary {
+      padding: 16px 36px;
+      background: transparent;
+      color: var(--text); font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px; cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-hero-secondary:hover {
+      border-color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      transform: translateY(-2px);
+    }
+
+    /* ── PHONE MOCKUP ── */
+    .mockup-wrap {
+      position: relative; z-index: 1;
+      margin-top: 80px;
+      animation: fadeUp 0.8s ease 0.5s both;
+    }
+
+    .phone-mockup {
+      width: 280px; height: 560px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,193,106,0.1),
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 100px rgba(0,193,106,0.08);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .phone-mockup::before {
+      content: '';
+      position: absolute; top: 14px; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 6px;
+      background: var(--border); border-radius: 3px;
+      z-index: 5;
+    }
+
+    .phone-screen {
+      padding: 32px 0 0;
+      height: 100%; display: flex; flex-direction: column;
+    }
+
+    .phone-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .phone-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(0,193,106,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: var(--green);
+    }
+
+    .phone-header-info p:first-child { font-size: 13px; font-weight: 600; }
+    .phone-header-info p:last-child { font-size: 11px; color: var(--green); }
+
+    .phone-messages {
+      flex: 1; padding: 12px; overflow: hidden;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .pm {
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 12px; line-height: 1.4;
+      max-width: 75%;
+      animation: msgIn 0.4s ease both;
+    }
+    .pm.recv {
+      background: #1C2A3A;
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .pm.sent {
+      background: rgba(0,193,106,0.12);
+      border: 1px solid rgba(0,193,106,0.2);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .pm:nth-child(1) { animation-delay: 0.8s; }
+    .pm:nth-child(2) { animation-delay: 1.2s; }
+    .pm:nth-child(3) { animation-delay: 1.6s; }
+    .pm:nth-child(4) { animation-delay: 2.0s; }
+    .pm:nth-child(5) { animation-delay: 2.4s; }
+
+    @keyframes msgIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    .phone-input-bar {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .phone-input-fake {
+      flex: 1; height: 34px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      display: flex; align-items: center;
+      padding: 0 12px;
+      font-size: 11px; color: var(--muted);
+    }
+
+    .phone-send {
+      width: 34px; height: 34px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      position: relative; z-index: 1;
+      padding: 100px 60px;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(0,193,106,0.3); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      font-size: 36px; margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+    /* ── CTA ── */
+    .cta-section {
+      position: relative; z-index: 1;
+      padding: 100px 60px;
+      text-align: center;
+    }
+
+    .cta-box {
+      max-width: 700px; margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid rgba(0,193,106,0.2);
+      border-radius: 30px;
+      padding: 60px 40px;
+      box-shadow: 0 0 80px rgba(0,193,106,0.06);
+    }
+
+    .cta-box h2 { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px; }
+    .cta-box p { font-size: 16px; color: var(--muted); margin-bottom: 36px; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 30px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; color: var(--muted);
+    }
+
+    .footer-logo { font-weight: 700; color: var(--text); }
+    .footer-logo span { color: var(--green); }
+
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links a:not(.btn-nav-primary) { display: none; }
+      .features { padding: 60px 20px; }
+      .cta-section { padding: 60px 20px; }
+      footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">💬</div>
+      <h1>Papo<span>Reto</span></h1>
+    </a>
+    <div class="nav-links">
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="login.html" class="btn-nav-primary">Entrar</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">✦ Plataforma de Mensagens</div>
+    <h2>Conecta com quem<br>importa de <span class="highlight">verdade</span></h2>
+    <p class="hero-sub">
+      Mensagens em tempo real, grupos, status, chamadas de voz e vídeo — tudo num só lugar, seguro e rápido.
+    </p>
+    <div class="hero-btns">
+      <a href="cadastro.html" class="btn-hero-primary">✦ Criar Conta Grátis</a>
+      <a href="login.html" class="btn-hero-secondary">→ Já tenho conta</a>
+    </div>
+  </section>
+
+  <!-- PHONE MOCKUP -->
+  <div class="mockup-wrap">
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div class="phone-header">
+          <div class="phone-avatar">AC</div>
+          <div class="phone-header-info">
+            <p>Amina Chissano</p>
+            <p>online agora</p>
+          </div>
+        </div>
+        <div class="phone-messages">
+          <div class="pm recv">Olá! Tudo bem? 😊</div>
+          <div class="pm sent">Tudo ótimo! E você?</div>
+          <div class="pm recv">Vai na festa amanhã? 🎉</div>
+          <div class="pm sent">Com certeza! 🔥</div>
+          <div class="pm recv">Ótimo, nos vemos lá! ✨</div>
+        </div>
+        <div class="phone-input-bar">
+          <div class="phone-input-fake">Digite uma mensagem...</div>
+          <div class="phone-send">➤</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" id="funcionalidades">
+    <div class="section-label">// O que o PapoReto oferece</div>
+    <h2 class="section-title">Tudo que você precisa</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">💬</span>
+        <h3>Chat em Tempo Real</h3>
+        <p>Mensagens instantâneas com indicador de digitando, lida/entregue e histórico completo.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">👥</span>
+        <h3>Grupos</h3>
+        <p>Crie grupos com nome e foto, adicione membros e converse em grupo com reações e mídia.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔵</span>
+        <h3>Status / Stories</h3>
+        <p>Publique fotos, vídeos ou textos que expiram em 24 horas para seus contatos verem.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📞</span>
+        <h3>Chamadas de Voz e Vídeo</h3>
+        <p>Chamadas de alta qualidade direto no navegador via WebRTC, sem instalar nada.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🖼️</span>
+        <h3>Envio de Mídia</h3>
+        <p>Compartilhe imagens, vídeos, áudios e documentos com armazenamento seguro na nuvem.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>Seguro e Privado</h3>
+        <p>Autenticação segura, senhas criptografadas, bloqueio de contatos e denúncia de abusos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <h2>Pronto para começar?</h2>
+      <p>Junte-se a milhares de utilizadores em Moçambique, Portugal, Angola e pelo mundo inteiro.</p>
+      <a href="cadastro.html" class="btn-hero-primary">✦ Criar Conta Gratuita</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Papo<span>Reto</span> &copy; 2025</div>
+    <div>Conecta de Verdade — Powered by Supabase</div>
+  </footer>
+
+  <script>
+    // Intersection Observer para animar feature cards
+    const cards = document.querySelectorAll('.feature-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.5s ease, transform 0.5s ease, border-color 0.3s';
+      observer.observe(card);
+    });
+
+    // Verificar se já tem sessão ativa
+    window.addEventListener('load', () => {
+      const session = localStorage.getItem('pr_session');
+      if (session) {
+        try {
+          const s = JSON.parse(session);
+          if (s && s.id) window.location.href = 'chat.html';
+        } catch(e) {}
+      }
+    });
+  </script>
+</body>
+</html>
